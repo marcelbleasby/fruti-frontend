@@ -13,7 +13,7 @@ export function EmConstrucao({ titulo, descricao }: { titulo: string; descricao:
         variant="first-use"
         icon={Construction}
         title="Tela em construção"
-        description="A navegação já está pronta; o conteúdo desta seção vem a seguir."
+        description="O conteúdo desta seção vem a seguir."
         bordered
       />
     </>

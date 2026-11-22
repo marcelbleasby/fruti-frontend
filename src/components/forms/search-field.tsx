@@ -11,11 +11,11 @@ import {
   Spinner,
   chakra,
   createListCollection,
-  useControllableState,
   type InputElementProps,
 } from "@chakra-ui/react";
 import { Search } from "lucide-react";
-import { useEffect, useMemo, useRef, type ReactElement, type ReactNode, type Ref } from "react";
+import { useMemo, useRef, useState, type ReactElement, type ReactNode, type Ref } from "react";
+import { DEBOUNCE_BUSCA_MS, useDebouncedCallback } from "@/hooks";
 import { FormField } from "./form-field";
 import { listContentStyles, listItemStyles, messageFontSize } from "./styles";
 import type { FieldBaseProps } from "./types";
@@ -34,10 +34,21 @@ export interface SearchFieldProps
   label?: string;
   showLabel?: boolean;
   value?: string;
+  /**
+   * Termo inicial (ex.: o `?busca=` da URL). Se mudar por fora para um termo
+   * diferente do último buscado — chip removido, "Limpar filtros", voltar no
+   * navegador —, o campo passa a mostrar o novo valor. Quando a mudança é o
+   * eco da própria busca, o que a pessoa está digitando não é sobrescrito.
+   */
   defaultValue?: string;
   /** Mudança imediata do texto (para controle). */
   onValueChange?: (value: string) => void;
-  /** Busca com debounce (padrão 300 ms). */
+  /**
+   * Busca com debounce (padrão 300 ms) a partir do que o usuário digita, com o
+   * termo já sem espaços nas pontas e só quando ele muda ("manga" e "manga "
+   * não buscam duas vezes). Limpar (×, Esc ou apagar tudo) e Enter buscam na
+   * hora. Mudar `value`/`defaultValue` por fora não dispara: quem mudou já sabe.
+   */
   onSearch?: (value: string) => void;
   debounceMs?: number;
   /** Mostra Spinner no lugar da lupa. */
@@ -56,8 +67,11 @@ export interface SearchFieldProps
 }
 
 /**
- * SearchField — Input · InputGroup · CloseButton · Spinner. Debounce de 300 ms,
- * botão limpar, estado carregando e, com `results`, lista com o termo destacado.
+ * SearchField — o campo de busca do DS (board "Componentes compartilhados"):
+ * Input · InputGroup · CloseButton · Spinner, 40 px, lupa de 16 px à esquerda,
+ * "×" para limpar (o nativo do navegador fica escondido), debounce de 300 ms
+ * (`useDebouncedCallback`) e, com `results`, lista com o termo destacado.
+ * Em listas, vai no slot `search` do `PageToolbar`.
  */
 export function SearchField(props: SearchFieldProps) {
   const {
@@ -67,7 +81,7 @@ export function SearchField(props: SearchFieldProps) {
     defaultValue,
     onValueChange,
     onSearch,
-    debounceMs = 300,
+    debounceMs = DEBOUNCE_BUSCA_MS,
     loading,
     results,
     onSelect,
@@ -85,23 +99,45 @@ export function SearchField(props: SearchFieldProps) {
     fieldProps,
   } = props;
 
-  const [query, setQuery] = useControllableState({ value, defaultValue: defaultValue ?? "", onChange: onValueChange });
+  const [internal, setInternal] = useState(defaultValue ?? "");
+  const query = value ?? internal;
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const onSearchRef = useRef(onSearch);
-  const firstRun = useRef(true);
 
-  useEffect(() => {
-    onSearchRef.current = onSearch;
-  });
+  // Último termo entregue a `onSearch` (já sem espaços nas pontas).
+  const [lastSearched, setLastSearched] = useState((value ?? defaultValue ?? "").trim());
 
-  useEffect(() => {
-    if (firstRun.current) {
-      firstRun.current = false;
-      return;
+  const dispatch = (q: string) => {
+    const term = q.trim();
+    if (term === lastSearched) return;
+    setLastSearched(term);
+    onSearch?.(term);
+  };
+  const search = useDebouncedCallback(dispatch, debounceMs);
+
+  // `defaultValue` mudou por fora (ver a prop): adota se não for o eco da última busca.
+  const [prevDefault, setPrevDefault] = useState(defaultValue);
+  if (defaultValue !== prevDefault) {
+    setPrevDefault(defaultValue);
+    const external = (defaultValue ?? "").trim();
+    if (value === undefined && external !== lastSearched) {
+      search.cancel();
+      setInternal(defaultValue ?? "");
+      setLastSearched(external);
     }
-    const timer = setTimeout(() => onSearchRef.current?.(query), debounceMs);
-    return () => clearTimeout(timer);
-  }, [query, debounceMs]);
+  }
+
+  /** Texto mudou pelo usuário: atualiza na hora e agenda a busca (vazio busca já). */
+  const changeQuery = (next: string) => {
+    if (next === query) return;
+    if (value === undefined) setInternal(next);
+    onValueChange?.(next);
+    if (next.trim() === "") {
+      search.cancel();
+      dispatch("");
+    } else {
+      search(next);
+    }
+  };
 
   const setRefs = (node: HTMLInputElement | null) => {
     inputRef.current = node;
@@ -110,14 +146,14 @@ export function SearchField(props: SearchFieldProps) {
   };
 
   const clear = () => {
-    setQuery("");
+    changeQuery("");
     inputRef.current?.focus();
   };
 
   const startElement = loading ? (
     <Spinner size="sm" color="fg.muted" aria-label="Carregando" />
   ) : (
-    <Search size={20} strokeWidth={1.75} aria-hidden="true" />
+    <Search size={16} strokeWidth={1.75} aria-hidden="true" />
   );
 
   const endElement = query ? (
@@ -141,8 +177,12 @@ export function SearchField(props: SearchFieldProps) {
 
   const inputCommon = {
     type: "search" as const,
+    enterKeyHint: "search" as const,
+    autoComplete: "off",
     placeholder,
     name,
+    // O "×" é o CloseButton do DS; o nativo do type=search ficaria duplicado.
+    css: { "&::-webkit-search-cancel-button": { display: "none" } },
     ps: "10",
     pe: query ? "11" : shortcut ? "16" : "3",
   };
@@ -171,7 +211,21 @@ export function SearchField(props: SearchFieldProps) {
   if (results === undefined) {
     return (
       <FormField {...fieldShell}>
-        {group(<Input ref={setRefs} value={query} onChange={(e) => setQuery(e.target.value)} {...inputCommon} />)}
+        {group(
+          <Input
+            ref={setRefs}
+            value={query}
+            onChange={(e) => changeQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") search.flush();
+              if (e.key === "Escape" && query) {
+                e.preventDefault();
+                changeQuery("");
+              }
+            }}
+            {...inputCommon}
+          />,
+        )}
       </FormField>
     );
   }
@@ -183,7 +237,7 @@ export function SearchField(props: SearchFieldProps) {
       <Combobox.Root
         collection={collection}
         inputValue={query}
-        onInputValueChange={(d) => setQuery(d.inputValue)}
+        onInputValueChange={(d) => changeQuery(d.inputValue)}
         onValueChange={(d) => {
           const item = d.items[0];
           if (item) onSelect?.(item);

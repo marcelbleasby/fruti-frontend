@@ -15,6 +15,8 @@ export interface CultivarListProps extends Omit<BoxProps, "children"> {
   /** Remover o filtro chama com `null`. */
   onSpeciesFilterChange?: (species: SpeciesRef | null) => void;
   getHref?: (cultivar: Cultivar) => string;
+  /** Nome da espécie de cada cultivar (útil sem filtro de espécie, quando a lista mistura espécies). */
+  getSpeciesName?: (cultivar: Cultivar) => string | undefined;
   loading?: boolean;
 }
 
@@ -27,6 +29,7 @@ export function CultivarList({
   speciesFilter,
   onSpeciesFilterChange,
   getHref,
+  getSpeciesName,
   loading,
   ...rest
 }: CultivarListProps) {
@@ -77,11 +80,11 @@ export function CultivarList({
         <EmptyState
           variant="in-card"
           size="sm"
-          title="Nenhuma cultivar"
+          title="Nenhum cultivo"
           description={
             speciesFilter
-              ? `${speciesFilter.name} ainda não tem cultivares. Sem cultivar, o plantio usa só a espécie.`
-              : "Cadastre cultivares para detalhar os plantios."
+              ? `${speciesFilter.name} ainda não tem cultivos.`
+              : "Cadastre cultivos para detalhar os plantios."
           }
         />
       ) : (
@@ -94,25 +97,42 @@ export function CultivarList({
           borderColor="border"
           borderRadius="l3"
           overflow="hidden"
-          aria-label={speciesFilter ? `Cultivares de ${speciesFilter.name}` : "Cultivares"}
+          aria-label={speciesFilter ? `Cultivos de ${speciesFilter.name}` : "Cultivos"}
         >
           {items.map((c) => {
-            const count = c.plantingCount ?? 0;
+            const count = c.plantingCount;
+            const especie = !speciesFilter ? getSpeciesName?.(c) : undefined;
+            const detalhe = c.origin ?? c.characteristics;
             const content = (
               <>
                 <Box display="flex" flexDirection="column" minW="0" flex="1">
                   <chakra.span textStyle="body.sm" fontWeight="600" color="fg.heading">
                     {c.name}
+                    {especie ? (
+                      <chakra.span fontWeight="400" color="fg.muted">
+                        {" "}
+                        · {especie}
+                      </chakra.span>
+                    ) : null}
                   </chakra.span>
-                  {c.origin && (
-                    <chakra.span textStyle="caption" fontWeight="400" fontStyle="italic" color="fg.muted">
-                      {c.origin}
+                  {detalhe && (
+                    <chakra.span
+                      textStyle="caption"
+                      fontWeight="400"
+                      fontStyle={c.origin ? "italic" : undefined}
+                      color="fg.muted"
+                      lineClamp={1}
+                    >
+                      {detalhe}
                     </chakra.span>
                   )}
                 </Box>
-                <Text as="span" textStyle="caption" color="fg.muted" whiteSpace="nowrap">
-                  {count > 0 ? plural(count, "plantio") : "sem plantios"}
-                </Text>
+                {/* Contagem só quando conhecida: sem ela, "sem plantios" seria enganoso. */}
+                {count !== undefined && (
+                  <Text as="span" textStyle="caption" color="fg.muted" whiteSpace="nowrap">
+                    {count > 0 ? plural(count, "plantio") : "sem plantios"}
+                  </Text>
+                )}
               </>
             );
             const row = {

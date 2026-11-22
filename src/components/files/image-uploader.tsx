@@ -5,7 +5,8 @@ import { useMemo } from "react";
 import { FileUpload, type FileUploadProps } from "@/components/forms/file-upload";
 import type { EntityRef } from "@/modules/types";
 import { IMAGE_ACCEPT, IMAGE_MAX_SIZE, MB } from "./constants";
-import { createFileValidator, useUploadQueue, type UploadContext } from "./use-upload-queue";
+import { useUploadQueue, type UploadContext } from "@/hooks/useUploadQueue";
+import { createFileValidator } from "./file-validator";
 
 export interface ImageUploaderProps<R = unknown>
   extends Pick<FileUploadProps, "label" | "helperText" | "required" | "disabled" | "optional" | "id" | "fieldProps"> {

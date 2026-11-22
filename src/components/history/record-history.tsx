@@ -7,7 +7,7 @@ import { Skeleton, SkeletonCircle } from "@/components/data-display/skeleton";
 import { EmptyState } from "@/components/feedback/empty-state";
 import { NativeSelectField } from "@/components/forms/native-select-field";
 import type { HistoryEvent, HistoryEventType } from "@/modules/types";
-import { useTodayISO } from "@/lib/use-today";
+import { useTodayISO } from "@/hooks/useTodayISO";
 import { HISTORY_EVENT_TYPES, dayLabel, formatDay, localDayKey } from "./history-utils";
 import { RecordHistoryItem } from "./record-history-item";
 import { type HeadingLevel, nextHeadingLevel } from "@/components/data-display/heading-level";

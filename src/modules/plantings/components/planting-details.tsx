@@ -53,7 +53,7 @@ export function PlantingDetails({
         planting.species.name
       ),
     },
-    { key: "cultivar", label: "Cultivar", value: planting.cultivar?.name },
+    { key: "cultivar", label: "Cultivo", value: planting.cultivar?.name },
     {
       key: "area",
       label: "Área",

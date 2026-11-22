@@ -11,7 +11,7 @@ import { Select } from "@/components/forms/select";
 import { TextInput } from "@/components/forms/text-input";
 import { Textarea } from "@/components/forms/textarea";
 import type { FieldOption } from "@/components/forms/types";
-import { useTodayISO } from "@/lib/use-today";
+import { useTodayISO } from "@/hooks/useTodayISO";
 import { formatNumber } from "@/modules/format";
 import type { SeedlingOriginType } from "@/modules/types";
 import { SeedlingOriginSelector } from "./seedling-origin-selector";
@@ -197,7 +197,7 @@ export function SeedlingForm({
           render={({ field }) => (
             <Select
               id={ids.cultivar}
-              label="Cultivar"
+              label="Cultivo"
               optional
               options={cultivarOptions}
               value={field.value}

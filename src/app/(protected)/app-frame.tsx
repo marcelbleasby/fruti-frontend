@@ -1,11 +1,12 @@
 "use client";
 
 import { LogOut } from "lucide-react";
-import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { Suspense, useEffect, type ReactNode } from "react";
+import { SessionCheck } from "@/components/auth";
 import { AppShell, MobileAppHeader, UserAvatar, type SidebarSlotContext } from "@/components/layout";
 import { useAuth } from "@/lib/auth/auth-context";
-import { HOME_ROUTE } from "@/lib/auth/routes";
+import { HOME_ROUTE, ONBOARDING_ROUTE } from "@/lib/auth/routes";
 import { PAPEL_LABEL, PropriedadeProvider, usePropriedade } from "@/lib/propriedades/propriedade-context";
 import { PropriedadeSwitcher } from "@/modules/propriedades";
 import { MOBILE_NAV, NAV, navItemFor } from "./nav";
@@ -59,7 +60,7 @@ function Shell({ children }: { children: ReactNode }) {
             appUser
               ? [
                   { label: "Sair", icon: LogOut, onClick: () => void logout() },
-                  { label: `Conta de ${appUser.name}`, content: <UserAvatar user={appUser} size={32} /> },
+                  { label: `Usuário: ${appUser.name}`, content: <UserAvatar user={appUser} size={32} /> },
                 ]
               : []
           }
@@ -71,11 +72,42 @@ function Shell({ children }: { children: ReactNode }) {
   );
 }
 
-/** Casca das telas autenticadas: sidebar com seletor de propriedade, cabeçalho e navegação mobile. */
+/**
+ * Primeiro acesso: sem nenhuma propriedade, o app não tem o que mostrar — manda
+ * para /bem-vindo. A administração global fica de fora: cuida dos catálogos e
+ * não precisa de propriedade.
+ */
+function OnboardingGate({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const { user } = useAuth();
+  const { status, propriedades } = usePropriedade();
+  const semPropriedade = status === "ready" && propriedades.length === 0 && user !== null && !user.administradorGlobal;
+
+  useEffect(() => {
+    if (semPropriedade) router.replace(ONBOARDING_ROUTE);
+  }, [semPropriedade, router]);
+
+  if (semPropriedade) return <SessionCheck label="Preparando o primeiro acesso…" />;
+  return children;
+}
+
+/**
+ * Casca das telas autenticadas: sidebar com seletor de propriedade, cabeçalho e navegação mobile.
+ *
+ * O Shell lê `usePathname()` (título e item ativo). Em rotas estáticas o caminho é
+ * conhecido no build e o Suspense nunca aparece; em rotas com parâmetro dinâmico
+ * (ex.: /areas-de-cultivo/[id]) o caminho só existe na requisição, e sem este
+ * Suspense o build falha. O fallback só é visto ao abrir uma dessas URLs direto:
+ * navegando pelo app, a casca já está montada.
+ */
 export function AppFrame({ children }: { children: ReactNode }) {
   return (
     <PropriedadeProvider>
-      <Shell>{children}</Shell>
+      <OnboardingGate>
+        <Suspense fallback={<SessionCheck label="Carregando…" />}>
+          <Shell>{children}</Shell>
+        </Suspense>
+      </OnboardingGate>
     </PropriedadeProvider>
   );
 }

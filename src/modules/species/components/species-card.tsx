@@ -15,13 +15,15 @@ export interface SpeciesCardProps extends Omit<BoxProps, "children"> {
   counts?: { cultivars?: number; plantings?: number };
   /** Nível do nome da espécie (padrão h3; tamanho de título de card). */
   headingAs?: HeadingLevel;
+  /** Área de foto (padrão: mostra; com `false` o card fica só com o texto, para catálogos sem fotos). */
+  showImage?: boolean;
 }
 
 /**
  * SpeciesCard — foto, nome popular, nome científico · família e contagens.
  * O card inteiro é um link (um único alvo de clique). Chakra v3: Card.Root · Image · Badge.
  */
-export function SpeciesCard({ species, href, counts, headingAs = "h3", ...rest }: SpeciesCardProps) {
+export function SpeciesCard({ species, href, counts, headingAs = "h3", showImage = true, ...rest }: SpeciesCardProps) {
   const cultivars = counts?.cultivars ?? species.cultivarCount;
   const plantings = counts?.plantings ?? species.plantingCount;
 
@@ -43,7 +45,7 @@ export function SpeciesCard({ species, href, counts, headingAs = "h3", ...rest }
       {...rest}
     >
       <NextLink href={href}>
-        {species.imageUrl ? (
+        {!showImage ? null : species.imageUrl ? (
           <Image src={species.imageUrl} alt={`Foto de ${species.name}`} ratio={16 / 9} borderRadius="0" />
         ) : (
           <Flex
@@ -72,10 +74,15 @@ export function SpeciesCard({ species, href, counts, headingAs = "h3", ...rest }
             <i>{species.scientificName}</i>
             {species.family ? ` · ${species.family}` : null}
           </chakra.span>
-          {(cultivars != null || plantings != null) && (
+          {(cultivars != null || plantings != null || species.active === false) && (
             <Flex gap="1.5" wrap="wrap" mt="1.5">
+              {species.active === false && (
+                <Badge tone="gray" variant="outline">
+                  Inativa
+                </Badge>
+              )}
               {cultivars != null && (
-                <Badge tone="green">{plural(cultivars, "cultivar", "cultivares")}</Badge>
+                <Badge tone="green">{plural(cultivars, "cultivo")}</Badge>
               )}
               {plantings != null && (
                 <Badge tone="gray">{plural(plantings, "plantio")}</Badge>

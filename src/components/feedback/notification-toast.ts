@@ -35,7 +35,8 @@ function resolveDuration(status: FeedbackStatus, options: NotificationToastOptio
 
 function show(status: FeedbackStatus, options: NotificationToastOptions): string {
   return toaster.create({
-    id: options.id,
+    // Só com id definido: o zag espalha `{ id, ...data }`, e `id: undefined` apagaria o id gerado.
+    ...(options.id !== undefined && { id: options.id }),
     type: status,
     title: options.title,
     description: options.description,

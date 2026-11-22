@@ -35,7 +35,7 @@ export interface LoginFormProps {
   loading?: boolean;
   forgotPasswordHref?: string;
   onForgotPassword?: () => void;
-  /** Link "Não tem conta? Criar conta". */
+  /** Link "Não tem cadastro? Criar conta". */
   signUpHref?: string;
   /** Componente de link (ex.: `next/link`). */
   linkAs?: ElementType;
@@ -64,7 +64,7 @@ export function LoginForm({
   linkAs,
   title = "Entrar no Fruti",
   subtitle,
-  helpText = "Problemas para entrar? Fale com o administrador da conta.",
+  helpText = "Problemas para entrar? Fale com o proprietário da propriedade.",
   showRemember = true,
   submitLabel = "Entrar",
   headingAs = "h1",
@@ -203,7 +203,7 @@ export function LoginForm({
 
       {signUpHref && (
         <Text fontSize="sm" color="fg.muted" textAlign="center">
-          Não tem conta?{" "}
+          Não tem cadastro?{" "}
           <Link
             as={linkAs ?? "a"}
             href={signUpHref}

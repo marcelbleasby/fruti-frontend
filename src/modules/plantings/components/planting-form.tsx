@@ -76,7 +76,7 @@ interface SectionDef {
 }
 
 const SECTIONS: SectionDef[] = [
-  { key: "species", title: "Espécie e cultivar", fields: ["speciesId", "cultivarId"], required: ["speciesId"] },
+  { key: "species", title: "Espécie e cultivo", fields: ["speciesId", "cultivarId"], required: ["speciesId"] },
   { key: "area", title: "Área", fields: ["areaId"], required: ["areaId"] },
   { key: "origin", title: "Origem do material", fields: ["originType", "batchId", "plants"], required: ["originType", "plants"] },
   { key: "date", title: "Data e controle", fields: ["plantedAt", "control"], required: ["plantedAt", "control"] },
@@ -173,7 +173,7 @@ function Section({
 /**
  * PlantingForm — cadastro/edição de plantio em 5 seções, com navegação lateral que indica
  * seções concluídas e com erro, FormErrorSummary e envio com chave de idempotência.
- * A estrutura não restringe a área a um plantio ativo (comporta plantios simultâneos no futuro).
+ * A estrutura não restringe a área a um plantio em campo (comporta plantios simultâneos no futuro).
  * Chakra v3: form · Fieldset · Field · FormErrorSummary · Button (submit) — react-hook-form.
  */
 export function PlantingForm({

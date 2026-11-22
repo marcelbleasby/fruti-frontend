@@ -3,7 +3,7 @@ import { Pencil } from "lucide-react";
 import NextLink from "next/link";
 import { RecordDetails } from "@/components/data-display/record-details";
 import { StatusBadge } from "@/components/data-display/status-badge";
-import { formatDate, plural } from "@/modules/format";
+import { formatDate, formatMeters, formatMonths, plural } from "@/modules/format";
 import type { Cultivar, PlantingRef, SpeciesRef } from "@/modules/types";
 import type { HeadingLevel } from "@/modules/typography";
 
@@ -11,7 +11,8 @@ export interface CultivarDetailsProps extends Omit<BoxProps, "children"> {
   cultivar: Cultivar;
   species: SpeciesRef;
   /** Plantios que usam a cultivar. */
-  plantings: PlantingRef[];
+  /** Ausente = não exibir a seção (plantios desconhecidos). */
+  plantings?: PlantingRef[];
   speciesHref?: string;
   getPlantingHref?: (planting: PlantingRef) => string;
   editHref?: string;
@@ -56,7 +57,7 @@ export function CultivarDetails({
             {cultivar.name}
           </Heading>
           <Text textStyle="body.sm" color="fg.muted">
-            Cultivar de {species.name}
+            Cultivo de {species.name}
           </Text>
         </Stack>
         {editHref ? (
@@ -88,27 +89,60 @@ export function CultivarDetails({
               species.name
             ),
           },
-          { label: "Origem", value: cultivar.origin },
-          { label: "Cadastrada em", value: cultivar.createdAt ? formatDate(cultivar.createdAt) : null },
+          ...(cultivar.origin ? [{ label: "Origem", value: cultivar.origin }] : []),
+          ...(cultivar.rowSpacingM !== undefined || cultivar.plantSpacingM !== undefined
+            ? [
+                cultivar.rowSpacingM !== undefined && cultivar.plantSpacingM !== undefined
+                  ? {
+                      label: "Espaçamento (linhas × plantas)",
+                      value: `${formatMeters(cultivar.rowSpacingM)} × ${formatMeters(cultivar.plantSpacingM)}`,
+                    }
+                  : cultivar.rowSpacingM !== undefined
+                    ? { label: "Espaçamento entre linhas", value: formatMeters(cultivar.rowSpacingM) }
+                    : { label: "Espaçamento entre plantas", value: formatMeters(cultivar.plantSpacingM ?? 0) },
+              ]
+            : []),
+          ...(cultivar.productionStartMonths !== undefined
+            ? [{ label: "Começa a produzir", value: formatMonths(cultivar.productionStartMonths) }]
+            : []),
+          { label: "Cadastrado em", value: cultivar.createdAt ? formatDate(cultivar.createdAt) : null },
           {
             label: "Características",
             span: "full",
-            value: cultivar.characteristics ?? (
+            value: cultivar.characteristics ? (
+              <Text as="span" fontWeight="400" overflowWrap="anywhere">
+                {cultivar.characteristics}
+              </Text>
+            ) : (
               <chakra.span color="fg.muted" fontWeight="400">
-                Registre aqui atributos agronômicos relevantes para o manejo.
+                Sem características registradas.
               </chakra.span>
             ),
           },
+          ...(cultivar.notes
+            ? [
+                {
+                  label: "Observações",
+                  value: (
+                    <Text as="span" fontWeight="400" overflowWrap="anywhere">
+                      {cultivar.notes}
+                    </Text>
+                  ),
+                  span: "full" as const,
+                },
+              ]
+            : []),
         ]}
       />
 
+      {plantings ? (
       <Stack gap="2" pt="3" borderTopWidth="1px" borderColor="green.100">
         <chakra.span id={listId} textStyle="label" color="fg.muted">
-          Plantios com esta cultivar
+          Plantios com este cultivo
         </chakra.span>
         {plantings.length === 0 ? (
           <Text textStyle="body.sm" color="fg.muted">
-            Nenhum plantio usa esta cultivar ainda.
+            Nenhum plantio usa este cultivo ainda.
           </Text>
         ) : (
           <Stack as="ul" listStyleType="none" gap="0" aria-labelledby={listId}>
@@ -156,6 +190,7 @@ export function CultivarDetails({
           </Stack>
         )}
       </Stack>
+      ) : null}
     </Box>
   );
 }

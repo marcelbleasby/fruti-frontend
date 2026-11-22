@@ -60,12 +60,15 @@ export async function loginAction(input: { usuario: string; senha: string; remem
 export type SignUpField = "usuario" | "email" | "senha" | "nome" | "sobrenome";
 
 export type SignUpResult =
+  /** Cadastro aceito e login automático feito. */
   | { status: "ok"; user: SessionUser | null }
-  /** Conta criada, mas o login automático falhou: mande para o login. */
-  | { status: "created" }
+  /**
+   * Cadastro recebido, mas o login automático não passou. Pode ser conta já
+   * existente (usuário ou e-mail) ou limite de tentativas — a API não diz qual,
+   * de propósito. Mostre `message` e mande para o login.
+   */
+  | { status: "accepted"; message: string }
   | { status: "invalid"; fields: Partial<Record<SignUpField, string>> }
-  /** Usuário ou e-mail já usados — a API não diz qual, de propósito. */
-  | { status: "conflict"; message: string }
   | { status: "locked"; retryAfterSeconds: number }
   | { status: "unavailable"; message: string };
 
@@ -87,8 +90,9 @@ export async function signUpAction(input: {
     sobrenome: str(input.sobrenome).trim(),
   };
 
+  let message: string;
   try {
-    await signUp(dados);
+    ({ mensagem: message } = await signUp(dados));
   } catch (err) {
     if (err instanceof ApiError) {
       if (err.status === 422) {
@@ -101,7 +105,6 @@ export async function signUpAction(input: {
         if (Object.keys(fields).length > 0) return { status: "invalid", fields };
         return { status: "unavailable", message: err.message };
       }
-      if (err.status === 409) return { status: "conflict", message: err.message };
       if (err.status === 429) return { status: "locked", retryAfterSeconds: err.retryAfterSeconds ?? 60 };
     }
     console.error("[auth] falha no cadastro", err);
@@ -111,8 +114,9 @@ export async function signUpAction(input: {
   try {
     return { status: "ok", user: await signIn({ usuario: dados.usuario, senha: dados.senha, remember: true }) };
   } catch (err) {
-    console.error("[auth] conta criada, mas o login automático falhou", err);
-    return { status: "created" };
+    // 401 aqui é esperado quando o usuário/e-mail já existia: a API ignora o cadastro sem avisar.
+    if (!(err instanceof ApiError && err.status === 401)) console.error("[auth] login após cadastro falhou", err);
+    return { status: "accepted", message };
   }
 }
 

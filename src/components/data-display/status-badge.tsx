@@ -6,20 +6,26 @@ import {
   History,
   type LucideIcon,
   Sprout,
+  Wheat,
   TriangleAlert,
   X,
 } from "lucide-react";
 import { forwardRef } from "react";
 import { TONES, type Tone } from "./tones";
 
-/** Status de um plantio (fluxo: planejado → em preparo → ativo → encerrado; cancelado fora do fluxo). */
-export type PlantingStatus = "planejado" | "em_preparo" | "ativo" | "encerrado" | "cancelado";
+/**
+ * Situação de um plantio, como no glossário (fluxo: planejado → implantado → em desenvolvimento →
+ * colhido → encerrado; cancelado fora do fluxo). Implantado, em desenvolvimento e colhido = "em campo".
+ */
+export type PlantingStatus = "planejado" | "implantado" | "em_desenvolvimento" | "colhido" | "encerrado" | "cancelado";
 /** Status de um lote de mudas (estoque baixo: abaixo de 10% do recebido). */
 export type BatchStatus = "disponivel" | "estoque_baixo" | "esgotado";
-/** Situação de uma área agrícola (com ou sem plantio ativo). */
+/** Situação de uma área agrícola (com ou sem plantio em campo). */
 export type AreaStatus = "com_plantio" | "sem_plantio";
+/** Registro cancelável (processamento, destinação, colheita): vale até ser cancelado. */
+export type RecordStatus = "registrado" | "cancelado";
 
-export type DomainStatus = PlantingStatus | BatchStatus | AreaStatus;
+export type DomainStatus = PlantingStatus | BatchStatus | AreaStatus | RecordStatus;
 
 export interface StatusDefinition {
   label: string;
@@ -34,8 +40,9 @@ export interface StatusDefinition {
 export const STATUS_DEFINITIONS: Record<DomainStatus, StatusDefinition> = {
   // Plantio
   planejado: { label: "Planejado", tone: "sky", icon: Calendar },
-  em_preparo: { label: "Em preparo", tone: "harvest", icon: Sprout },
-  ativo: { label: "Ativo", tone: "green", icon: CircleCheck },
+  implantado: { label: "Implantado", tone: "harvest", icon: Sprout },
+  em_desenvolvimento: { label: "Em desenvolvimento", tone: "green", icon: CircleCheck },
+  colhido: { label: "Colhido", tone: "green", icon: Wheat },
   encerrado: { label: "Encerrado", tone: "gray", icon: History },
   cancelado: { label: "Cancelado", tone: "red", icon: X },
   // Lote de mudas
@@ -43,19 +50,23 @@ export const STATUS_DEFINITIONS: Record<DomainStatus, StatusDefinition> = {
   estoque_baixo: { label: "Estoque baixo", tone: "harvest", icon: TriangleAlert },
   esgotado: { label: "Esgotado", tone: "gray", icon: X },
   // Área (não desenhado como badge no board; textos do AreaSelector)
-  com_plantio: { label: "Com plantio ativo", tone: "green", icon: Sprout },
-  sem_plantio: { label: "Sem plantio ativo", tone: "gray", icon: CircleDashed },
+  com_plantio: { label: "Com plantio em campo", tone: "green", icon: Sprout },
+  sem_plantio: { label: "Sem plantio em campo", tone: "gray", icon: CircleDashed },
+  // Registro cancelável ("cancelado" é compartilhado com o plantio)
+  registrado: { label: "Registrado", tone: "green", icon: CircleCheck },
 };
 
 export const PLANTING_STATUSES: readonly PlantingStatus[] = [
   "planejado",
-  "em_preparo",
-  "ativo",
+  "implantado",
+  "em_desenvolvimento",
+  "colhido",
   "encerrado",
   "cancelado",
 ];
 export const BATCH_STATUSES: readonly BatchStatus[] = ["disponivel", "estoque_baixo", "esgotado"];
 export const AREA_STATUSES: readonly AreaStatus[] = ["com_plantio", "sem_plantio"];
+export const RECORD_STATUSES: readonly RecordStatus[] = ["registrado", "cancelado"];
 
 export function getStatusDefinition(status: DomainStatus): StatusDefinition {
   return STATUS_DEFINITIONS[status];

@@ -157,9 +157,13 @@ export interface SignUpInput {
   sobrenome?: string;
 }
 
-/** Cadastro público. Não inicia sessão: quem chama faz o `signIn` em seguida. */
-export async function signUp(input: SignUpInput): Promise<void> {
-  await apiFetch<UsuarioSaida>("/autenticacao/cadastrar", {
+/**
+ * Cadastro público. A API responde sempre 202 com a mesma mensagem, tenha
+ * criado a conta ou não (usuário/e-mail já existente), para não revelar contas.
+ * Não inicia sessão: quem chama tenta o `signIn` em seguida.
+ */
+export async function signUp(input: SignUpInput): Promise<{ mensagem: string }> {
+  return apiFetch<{ mensagem: string }>("/autenticacao/cadastrar", {
     method: "POST",
     body: input,
     clientIp: clientIpFrom(await headers()),

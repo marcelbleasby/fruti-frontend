@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SignUpScreen } from "./sign-up-screen";
 
 export const metadata: Metadata = {
-  title: "Criar conta · Fruti",
+  title: "Cadastro · Fruti",
   robots: { index: false },
 };
 

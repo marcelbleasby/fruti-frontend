@@ -1,7 +1,8 @@
 import { parseDate, type DatePickerRootProps, type DateValue } from "@chakra-ui/react";
+import { formatarData, hojeISO, type DataISO } from "@/lib/datas";
 
-/** Datas trafegam como ISO `YYYY-MM-DD` na API dos componentes. */
-export type ISODate = string;
+/** Datas trafegam como ISO `YYYY-MM-DD` na API dos componentes. Mesmo tipo de `lib/datas`. */
+export type ISODate = DataISO;
 
 /** ISO → DateValue (undefined se vazio ou inválido). */
 export function toDateValue(iso?: ISODate | null): DateValue | undefined {
@@ -18,20 +19,11 @@ export function toISODate(value?: DateValue | null): ISODate | null {
   return value ? value.toString().slice(0, 10) : null;
 }
 
-const pad = (n: number) => String(n).padStart(2, "0");
+/** Hoje em ISO, no fuso das propriedades (`hojeISO` de `lib/datas`). */
+export const todayISO = (): ISODate => hojeISO();
 
-/** Hoje (fuso local) em ISO. */
-export function todayISO(): ISODate {
-  const d = new Date();
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
-
-/** ISO → `dd/mm/aaaa`. */
-export function formatISODate(iso?: ISODate | null): string {
-  if (!iso) return "";
-  const [y, m, d] = iso.slice(0, 10).split("-");
-  return y && m && d ? `${d}/${m}/${y}` : iso;
-}
+/** ISO → `dd/mm/aaaa` (vazio quando ausente/inválida). */
+export const formatISODate = (iso?: ISODate | null): string => formatarData(iso, "");
 
 /** Rótulos acessíveis do calendário em pt-BR. */
 export const datePickerTranslations: NonNullable<DatePickerRootProps["translations"]> = {

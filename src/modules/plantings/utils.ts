@@ -4,10 +4,14 @@ import type { HistoryEvent, PlantControlMode, PlantingStatus } from "../types";
 /** Fluxo do plantio (cancelado fica fora do fluxo e aparece só como badge). */
 export const PLANTING_FLOW: readonly Exclude<PlantingStatus, "cancelado">[] = [
   "planejado",
-  "em_preparo",
-  "ativo",
+  "implantado",
+  "em_desenvolvimento",
+  "colhido",
   "encerrado",
 ];
+
+/** Situações em que o plantio ocupa a unidade de cultivo ("em campo", no glossário). */
+export const EM_CAMPO: readonly PlantingStatus[] = ["implantado", "em_desenvolvimento", "colhido"];
 
 export const PLANT_CONTROL_LABEL: Record<PlantControlMode, string> = {
   individual: "Individual",

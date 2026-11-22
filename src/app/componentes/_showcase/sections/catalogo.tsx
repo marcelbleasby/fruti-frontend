@@ -28,7 +28,7 @@ export function CatalogoSection() {
   return (
     <ShowcaseSection
       id="catalogo"
-      title="Espécies e cultivares"
+      title="Cultivos"
       description="Catálogo global (módulos 6.1 e 6.2). Toda cultivar pertence a uma espécie; a interface respeita essa dependência."
     >
       <Demo name="SpeciesSelector" importPath="@/modules/species" description="Busca por nome popular ou científico; o nome científico fica sempre visível.">

@@ -126,7 +126,7 @@ export function PropriedadeSwitcher({ propriedades, ativaId, onSelect, loading, 
           <Menu.Trigger asChild>
             <chakra.button
               type="button"
-              aria-label={`Propriedade ativa: ${ativa.nome}. Trocar propriedade`}
+              aria-label={`Propriedade atual: ${ativa.nome}. Trocar propriedade`}
               cursor="pointer"
               fontFamily="body"
               transition="background-color 150ms ease, border-color 150ms ease"

@@ -59,11 +59,14 @@ const controlBase = {
 
 /**
  * A variante `outline` nativa define `borderColor: "border"` (verde decorativo dos
- * cards, 1,2:1) e vence o `base`. Campo precisa de borda de controle (3,6:1,
- * WCAG 1.4.11), então a variante é redeclarada com o token certo.
+ * cards, 1,2:1) e `bg: "transparent"`, e vence o `base`. Campo precisa de borda
+ * de controle (3,6:1, WCAG 1.4.11) e fundo branco do DS — transparente, ele
+ * herda o verde da página e some ao lado dos selects —, então a variante é
+ * redeclarada com os tokens certos.
  */
 const outlineVariant = {
   outline: {
+    bg: "bg.panel",
     borderColor: "border.control",
     _invalid: { borderColor: "border.error" },
   },

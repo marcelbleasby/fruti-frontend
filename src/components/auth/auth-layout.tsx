@@ -22,7 +22,7 @@ export interface AuthLayoutProps {
 }
 
 const defaultFeatures: AuthLayoutFeature[] = [
-  { icon: BookOpen, label: "Catálogo de espécies e cultivares" },
+  { icon: BookOpen, label: "Catálogo de espécies e cultivos" },
   { icon: MapPin, label: "Áreas, plantios e plantas" },
   { icon: Workflow, label: "Rastreabilidade do lote à planta" },
 ];

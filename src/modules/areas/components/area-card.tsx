@@ -10,7 +10,7 @@ export interface AreaCardProps extends Omit<BoxProps, "children"> {
   area: Area;
   /** Nível do nome da área (padrão h3; o tamanho é sempre o de título de card). */
   headingAs?: HeadingLevel;
-  /** Plantios ativos (padrão: `area.activePlantings`). */
+  /** Plantios em campo (padrão: `area.activePlantings`). */
   activePlantings?: number;
   /** Total de plantas (padrão: `area.plants`). */
   plants?: number;
@@ -24,8 +24,9 @@ export function HectareValue({ squareMeters, size = "md" }: { squareMeters: numb
   return <MetricValue value={num} unit={unit} size={size} />;
 }
 
-/** Código de área em Fira Code (RecordCode). */
+/** Código de área em Fira Code (RecordCode). O código é opcional: vazio, não renderiza nada. */
 export function AreaCode({ children, color = "fg.muted" }: { children: string; color?: string }) {
+  if (!children) return null;
   return <RecordCode color={color}>{children}</RecordCode>;
 }
 
@@ -55,7 +56,7 @@ export function AreaCard({ area, activePlantings, plants, href, headingAs = "h3"
           <chakra.span color="primary" display="flex" aria-hidden="true">
             <Sprout size={16} strokeWidth={1.75} />
           </chakra.span>
-          {active > 0 ? plural(active, "plantio ativo", "plantios ativos") : "Sem plantio ativo"}
+          {active > 0 ? plural(active, "plantio em campo", "plantios em campo") : "Sem plantio em campo"}
         </Flex>
         {plantCount != null && plantCount > 0 && <span>{plural(plantCount, "planta")}</span>}
       </Flex>

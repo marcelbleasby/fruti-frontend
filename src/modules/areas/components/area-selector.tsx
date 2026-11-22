@@ -16,7 +16,7 @@ export interface AreaSelectorProps extends FieldBaseProps {
   value?: AreaId | null;
   defaultValue?: AreaId;
   onChange?: (value: AreaId | null, area: Area | undefined) => void;
-  /** Restringe as opções (ex.: só áreas sem plantio ativo). */
+  /** Restringe as opções (ex.: só áreas sem plantio em campo). */
   filter?: (area: Area) => boolean;
   /** Desabilita (sem esconder) as opções que não passam no critério. */
   isAreaDisabled?: (area: Area) => boolean;
@@ -29,7 +29,7 @@ export interface AreaSelectorProps extends FieldBaseProps {
 
 function activeText(area: Area): string {
   const n = area.activePlantings ?? 0;
-  return n > 0 ? plural(n, "plantio ativo", "plantios ativos") : "Sem plantio ativo";
+  return n > 0 ? plural(n, "plantio em campo", "plantios em campo") : "Sem plantio em campo";
 }
 
 function areaSize(area: Area): string {

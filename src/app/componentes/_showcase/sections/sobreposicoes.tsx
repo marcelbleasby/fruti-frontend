@@ -9,6 +9,7 @@ import {
   ConfirmActionDialog,
   Dialog,
   Drawer,
+  DrawerSection,
   Popover,
   Tooltip,
   type DialogSize,
@@ -73,11 +74,15 @@ function DrawerDemo({ size, placement, mobileSheet, label }: { size?: DrawerSize
         </>
       }
     >
-      <Stack gap="2">
-        <Text textStyle="body.sm">Área: A-03 · Talhão Norte</Text>
-        <Text textStyle="body.sm">Espécie: Manga</Text>
-        <Text textStyle="body.sm">Status: Ativo</Text>
-      </Stack>
+      <DrawerSection title="Status">
+        <Text textStyle="body.sm">Ativo · Em preparo</Text>
+      </DrawerSection>
+      <DrawerSection title="Espécie">
+        <Text textStyle="body.sm">Manga</Text>
+      </DrawerSection>
+      <DrawerSection title="Área">
+        <Text textStyle="body.sm">A-03 · Talhão Norte</Text>
+      </DrawerSection>
     </Drawer>
   );
 }
@@ -206,7 +211,7 @@ export function SobreposicoesSection() {
           <Variant label="tone danger · async">
             <ConfirmActionDialog
               title="Encerrar PL-0042?"
-              description="As 480 plantas saem dos indicadores de plantios ativos. O histórico é mantido."
+              description="As 480 plantas saem dos indicadores de plantios em campo. O histórico é mantido."
               confirmLabel="Encerrar plantio"
               onConfirm={async () => {
                 await wait(1200);

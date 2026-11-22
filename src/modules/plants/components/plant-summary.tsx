@@ -5,7 +5,7 @@ import { ChevronRight } from "lucide-react";
 import NextLink from "next/link";
 import { Badge } from "@/components/data-display/badge";
 import { Image } from "@/components/data-display/image";
-import { useTodayISO } from "@/lib/use-today";
+import { useTodayISO } from "@/hooks/useTodayISO";
 import { formatDate } from "../../format";
 import type { Plant } from "../../types";
 import { RecordCode } from "../../typography";

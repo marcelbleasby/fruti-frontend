@@ -196,9 +196,9 @@ export function FormulariosSection() {
               clearable
               defaultValue="a-03"
               options={[
-                { value: "a-03", label: "A-03 · Talhão Norte", group: "Com plantio ativo" },
-                { value: "a-05", label: "A-05 · Encosta", group: "Com plantio ativo" },
-                { value: "a-07", label: "A-07 · Viveiro", group: "Sem plantio ativo" },
+                { value: "a-03", label: "A-03 · Talhão Norte", group: "Com plantio em campo" },
+                { value: "a-05", label: "A-05 · Encosta", group: "Com plantio em campo" },
+                { value: "a-07", label: "A-07 · Viveiro", group: "Sem plantio em campo" },
               ]}
             />
           </Variant>

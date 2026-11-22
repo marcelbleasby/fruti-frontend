@@ -55,7 +55,7 @@ const METRICS: MetricGroupItem[] = [
     icon: <LandPlot />,
     trend: { value: "+4,2 ha", direction: "up", label: "em 12 meses" },
   },
-  { label: "Plantios ativos", value: 9, icon: <Sprout /> },
+  { label: "Plantios em campo", value: 9, icon: <Sprout /> },
   { label: "Plantas", value: 6480, icon: <TreeDeciduous /> },
   {
     label: "Mudas livres",
@@ -271,7 +271,7 @@ export function GraficosSection() {
             <ChartCard headingAs="h4"
               type="bar"
               title="Plantas por espécie"
-              description="Plantios ativos · do maior para o menor"
+              description="Plantios em campo · do maior para o menor"
               data={PLANTS_BY_SPECIES}
               unit="plantas"
               categoryLabel="Espécie"
@@ -323,7 +323,7 @@ export function GraficosSection() {
               title="Plantas por espécie"
               data={[]}
               state="empty"
-              emptyTitle="Nenhum plantio ativo"
+              emptyTitle="Nenhum plantio em campo"
             />
           </Variant>
         </VariantGrid>

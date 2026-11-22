@@ -2,7 +2,8 @@
 
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Link } from "@chakra-ui/react";
+import { useEffect, useState, type ReactNode } from "react";
 import { SignUpForm, type SignUpFormValues } from "@/components/auth";
 import { lockoutMessage, useAuth } from "@/lib/auth/auth-context";
 import { HOME_ROUTE, LOGIN_ROUTE } from "@/lib/auth/routes";
@@ -10,7 +11,8 @@ import { HOME_ROUTE, LOGIN_ROUTE } from "@/lib/auth/routes";
 export function SignUpScreen() {
   const router = useRouter();
   const { signUp } = useAuth();
-  const [error, setError] = useState<{ title: string; message: string } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<ReactNode>(null);
   const [lockedFor, setLockedFor] = useState(0);
 
   useEffect(() => {
@@ -21,29 +23,31 @@ export function SignUpScreen() {
 
   async function handleSubmit(values: SignUpFormValues) {
     setError(null);
+    setNotice(null);
     const result = await signUp(values);
 
     switch (result.status) {
       case "ok":
         router.replace(HOME_ROUTE);
         return;
-      case "created":
-        // Conta existe; só o login automático falhou.
-        router.replace(LOGIN_ROUTE);
+      case "accepted":
+        // A API não diz se a conta foi criada ou já existia: mensagem neutra + caminho para o login.
+        setNotice(
+          <>
+            {result.message}{" "}
+            <Link asChild fontWeight="600" textDecoration="underline" textUnderlineOffset="4px">
+              <NextLink href={LOGIN_ROUTE}>Ir para o login</NextLink>
+            </Link>
+          </>,
+        );
         return;
       case "invalid":
         return result.fields;
-      case "conflict":
-        setError({
-          title: "Usuário ou e-mail já cadastrado",
-          message: "Escolha outro nome de usuário ou e-mail. Se a conta for sua, entre com ela.",
-        });
-        return;
       case "locked":
         setLockedFor(result.retryAfterSeconds);
         return;
       default:
-        setError({ title: "Serviço indisponível", message: result.message });
+        setError(result.message);
     }
   }
 
@@ -52,8 +56,9 @@ export function SignUpScreen() {
       onSubmit={handleSubmit}
       loginHref={LOGIN_ROUTE}
       linkAs={NextLink}
-      error={error?.message}
-      errorTitle={error?.title}
+      error={error}
+      errorTitle="Serviço indisponível"
+      notice={notice}
       locked={lockedFor > 0 && { description: lockoutMessage(lockedFor) }}
     />
   );

@@ -13,4 +13,5 @@ export { FileDownloadAction, type FileDownloadActionProps } from "./file-downloa
 export { ImageGallery, type ImageGalleryProps } from "./image-gallery";
 export { ImagePreview, type ImagePreviewProps } from "./image-preview";
 export { ImageUploader, type ImageUploaderProps } from "./image-uploader";
-export { createFileValidator, useUploadQueue, type UploadContext, type UploadFn } from "./use-upload-queue";
+export { createFileValidator } from "./file-validator";
+export { useUploadQueue, type UploadContext, type UploadFn } from "@/hooks/useUploadQueue";

@@ -4,5 +4,5 @@ import { EmConstrucao } from "../em-construcao";
 export const metadata: Metadata = { title: "Painel · Fruti" };
 
 export default function PainelPage() {
-  return <EmConstrucao titulo="Painel" descricao="Resumo da propriedade: plantios em andamento, ocorrências abertas e próximas atividades." />;
+  return <EmConstrucao titulo="Painel" descricao="Resumo da propriedade atual." />;
 }

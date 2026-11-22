@@ -1,8 +1,24 @@
 import type { Metadata } from "next";
-import { EmConstrucao } from "../em-construcao";
+import { Suspense } from "react";
+import { EstoqueCabecalho, EstoqueCabecalhoEstatico } from "@/modules/estoque/components/estoque-cabecalho";
+import { EstoqueCarregando } from "@/modules/estoque/components/estoque-estados";
+import { EstoqueConteudo } from "@/modules/estoque/estoque-conteudo";
 
-export const metadata: Metadata = { title: "Material vegetal · Fruti" };
+export const metadata: Metadata = { title: "Mudas e sementes · Fruti" };
 
-export default function EstoqueVegetalPage() {
-  return <EmConstrucao titulo="Material vegetal" descricao="Lotes de sementes e mudas da propriedade, com seus saldos." />;
+/**
+ * /estoque-vegetal — cabeçalho e drawers no cliente (URL: ?lote=, ?registrar=1);
+ * lista e resumo no servidor, dentro do Suspense (leem cookie e filtros da URL).
+ */
+export default function EstoqueVegetalPage({ searchParams }: PageProps<"/estoque-vegetal">) {
+  return (
+    <>
+      <Suspense fallback={<EstoqueCabecalhoEstatico tipo="vegetal" />}>
+        <EstoqueCabecalho tipo="vegetal" />
+      </Suspense>
+      <Suspense fallback={<EstoqueCarregando />}>
+        <EstoqueConteudo tipo="vegetal" searchParams={searchParams} />
+      </Suspense>
+    </>
+  );
 }

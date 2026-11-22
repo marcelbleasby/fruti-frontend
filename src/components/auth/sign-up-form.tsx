@@ -28,13 +28,16 @@ export interface SignUpFormProps {
   /** Pode devolver erros por campo da API; eles aparecem sob cada campo. */
   onSubmit: (values: SignUpFormValues) => void | SignUpFormFieldErrors | Promise<void | SignUpFormFieldErrors>;
   defaultValues?: Partial<SignUpFormValues>;
-  /** Erro geral (ex.: conflito de usuário/e-mail, serviço fora do ar). */
+  /** Erro geral (ex.: serviço fora do ar). */
   error?: ReactNode;
   errorTitle?: string;
+  /** Aviso informativo no topo (ex.: "Cadastro recebido…"). */
+  notice?: ReactNode;
+  noticeTitle?: string;
   /** Bloqueio temporário por excesso de tentativas; desabilita o envio. */
   locked?: boolean | SignUpFormLockout;
   loading?: boolean;
-  /** Link "Já tem conta? Entrar". */
+  /** Link "Já tem cadastro? Entrar". */
   loginHref?: string;
   linkAs?: ElementType;
   title?: ReactNode;
@@ -72,12 +75,14 @@ export function SignUpForm({
   onSubmit,
   defaultValues,
   error,
-  errorTitle = "Não foi possível criar a conta",
+  errorTitle = "Não foi possível concluir o cadastro",
+  notice,
+  noticeTitle,
   locked,
   loading,
   loginHref,
   linkAs,
-  title = "Criar conta no Fruti",
+  title = "Cadastro no Fruti",
   subtitle = "Depois de entrar, você cadastra sua propriedade.",
   headingAs = "h1",
   submitLabel = "Criar conta",
@@ -141,6 +146,7 @@ export function SignUpForm({
         />
       )}
       {error && !lockout && <Alert status="error" title={errorTitle} description={error} />}
+      {notice && !error && !lockout && <Alert status="info" title={noticeTitle} description={notice} />}
 
       <Grid templateColumns={{ base: "1fr", sm: "1fr 1fr" }} gap="3.5">
         <Field.Root invalid={Boolean(errors.nome)}>
@@ -273,7 +279,7 @@ export function SignUpForm({
 
       {loginHref && (
         <Text fontSize="sm" color="fg.muted" textAlign="center">
-          Já tem conta?{" "}
+          Já tem cadastro?{" "}
           <Link
             as={linkAs ?? "a"}
             href={loginHref}

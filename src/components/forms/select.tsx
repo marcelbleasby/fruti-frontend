@@ -9,7 +9,7 @@ import { listContentStyles, listGroupLabelStyles, listItemStyles, triggerStyles 
 import type { FieldBaseProps, FieldOption } from "./types";
 
 export interface SelectOption extends FieldOption {
-  /** Nome do grupo (ex.: "Com plantio ativo"). Opções com grupo são agrupadas com rótulo. */
+  /** Nome do grupo (ex.: "Com plantio em campo"). Opções com grupo são agrupadas com rótulo. */
   group?: string;
 }
 

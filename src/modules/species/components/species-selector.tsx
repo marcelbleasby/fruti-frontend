@@ -29,7 +29,7 @@ export interface SpeciesSelectorProps extends FieldBaseProps {
 
 function cultivarCountLabel(count: number | undefined): string | null {
   if (count == null) return null;
-  return count === 0 ? "sem cultivares" : plural(count, "cultivar", "cultivares");
+  return count === 0 ? "sem cultivos" : plural(count, "cultivo", "cultivos");
 }
 
 /**

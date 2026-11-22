@@ -47,7 +47,7 @@ const manga = { id: "sp-manga", name: "Manga", scientificName: "Mangifera indica
 export const PLANTING: Planting = {
   id: "pl-0042",
   code: "PL-0042",
-  status: "ativo",
+  status: "em_desenvolvimento",
   species: manga,
   cultivar: { id: "cv-tommy", name: "Tommy Atkins" },
   area: { id: "ar-03", code: "A-03", name: "Talhão Norte" },
@@ -74,8 +74,8 @@ export const PLANTINGS: PlantingSummary[] = [
 ];
 
 export const PLANTING_REFS: PlantingRef[] = [
-  { id: "pl-0042", code: "PL-0042", areaCode: "A-03", plants: 480, status: "ativo" },
-  { id: "pl-0036", code: "PL-0036", areaCode: "A-04", plants: 120, status: "ativo" },
+  { id: "pl-0042", code: "PL-0042", areaCode: "A-03", plants: 480, status: "em_desenvolvimento" },
+  { id: "pl-0036", code: "PL-0036", areaCode: "A-04", plants: 120, status: "em_desenvolvimento" },
 ];
 
 export const PLANT_GROUPS: PlantGroup[] = [

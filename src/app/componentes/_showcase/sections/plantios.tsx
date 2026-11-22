@@ -18,13 +18,14 @@ import type { PlantingStatus as PlantingStatusValue, PlantingSummary as Planting
 import { AREAS, BATCHES, CULTIVARS, HISTORY, PLANTING, PLANTINGS, SPECIES } from "../fixtures";
 import { Demo, Row, ShowcaseSection, Variant, VariantGrid } from "../showcase";
 
-const STATUSES: PlantingStatusValue[] = ["planejado", "em_preparo", "ativo", "encerrado", "cancelado"];
+const STATUSES: PlantingStatusValue[] = ["planejado", "implantado", "em_desenvolvimento", "colhido", "encerrado", "cancelado"];
 
 /** Transições permitidas por status (na aplicação, vêm da API). */
 const TRANSITIONS: Record<PlantingStatusValue, PlantingStatusValue[]> = {
-  planejado: ["em_preparo", "cancelado"],
-  em_preparo: ["ativo", "cancelado"],
-  ativo: ["encerrado"],
+  planejado: ["implantado", "cancelado"],
+  implantado: ["em_desenvolvimento", "cancelado"],
+  em_desenvolvimento: ["colhido", "encerrado"],
+  colhido: ["em_desenvolvimento", "encerrado"],
   encerrado: [],
   cancelado: [],
 };
@@ -32,7 +33,7 @@ const TRANSITIONS: Record<PlantingStatusValue, PlantingStatusValue[]> = {
 const SEED_PLANTING: PlantingSummaryData = {
   id: "pl-0043",
   code: "PL-0043",
-  status: "em_preparo",
+  status: "implantado",
   species: { id: "sp-maracuja", name: "Maracujá", scientificName: "Passiflora edulis" },
   cultivar: null,
   area: { id: "ar-05", code: "A-05", name: "Encosta" },
@@ -79,7 +80,7 @@ function FormBoundSelectorsDemo() {
 }
 
 export function PlantiosSection() {
-  const [status, setStatus] = useState<PlantingStatusValue>("em_preparo");
+  const [status, setStatus] = useState<PlantingStatusValue>("implantado");
   const [filter, setFilter] = useState<PlantingTimelineFilter>("todos");
   const [log, setLog] = useState("Nenhum envio ainda.");
 

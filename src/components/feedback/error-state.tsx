@@ -72,7 +72,7 @@ const variantConfig: Record<
     tone: "warning",
     size: "sm",
     title: "Sem acesso",
-    description: "Seu perfil não inclui este módulo. Fale com o administrador da conta.",
+    description: "Seu papel não inclui este módulo. Fale com o proprietário.",
     retryLabel: "Tentar novamente",
   },
   offline: {

@@ -66,7 +66,7 @@ export function AccountMenu({
       <Menu.Trigger asChild>
         <chakra.button
           type="button"
-          aria-label={`Conta de ${name}`}
+          aria-label={`Menu de ${name}`}
           display="inline-flex"
           alignItems="center"
           justifyContent="center"

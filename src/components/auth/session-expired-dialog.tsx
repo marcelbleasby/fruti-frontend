@@ -45,7 +45,7 @@ export function SessionExpiredDialog({
   onForgotPassword,
   linkAs,
   title = "Sua sessão expirou",
-  description = "Entre de novo para continuar. O que você estava preenchendo foi mantido.",
+  description = "Entre de novo; o que você preenchia foi mantido.",
 }: SessionExpiredDialogProps) {
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const [capsLock, setCapsLock] = useState(false);

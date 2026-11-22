@@ -75,8 +75,10 @@ export function RadioCardGroup(props: RadioCardGroupProps) {
         size="md"
         gap="0"
       >
+        {/* Linhas de mesma altura (a do card mais alto): os cards ficam do mesmo tamanho mesmo com textos que quebram. */}
         <SimpleGrid
           gap="3"
+          gridAutoRows="1fr"
           {...(minCardWidth
             ? { templateColumns: `repeat(auto-fit, minmax(min(100%, ${minCardWidth}), 1fr))` }
             : { columns: columns ?? { base: 1, md: Math.min(options.length, 3) } })}
@@ -99,7 +101,7 @@ export function RadioCardGroup(props: RadioCardGroupProps) {
               _disabled={{ layerStyle: "disabled", opacity: 1 }}
             >
               <RadioCard.ItemHiddenInput />
-              <RadioCard.ItemControl p="4" gap="3" flexDirection="row" alignItems="center">
+              <RadioCard.ItemControl p="4" gap="3" flex="1" flexDirection="row" alignItems="center">
                 {/* Rádio à esquerda, centralizado na altura do conteúdo (rótulo + descrição). */}
                 {showIndicator && <RadioCard.ItemIndicator css={radioControlStyles} flexShrink={0} />}
                 <RadioCard.ItemContent gap="1" alignItems="flex-start" textAlign="start" minW="0" overflowWrap="break-word">

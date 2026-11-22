@@ -25,7 +25,7 @@ export const NAV: NavGroup[] = [
     items: [{ label: "Painel", href: "/painel", icon: <LayoutDashboard /> }],
   },
   {
-    label: "Produção",
+    label: "Campo",
     items: [
       { label: "Plantios", href: "/plantios", icon: <Sprout /> },
       { label: "Áreas de cultivo", href: "/areas-de-cultivo", icon: <LandPlot /> },
@@ -37,9 +37,9 @@ export const NAV: NavGroup[] = [
   {
     label: "Estoque",
     items: [
-      { label: "Material vegetal", href: "/estoque-vegetal", icon: <Shrub /> },
+      { label: "Mudas e sementes", href: "/estoque-vegetal", icon: <Shrub /> },
       { label: "Insumos", href: "/insumos", icon: <Package /> },
-      { label: "Estoque de produção", href: "/estoque-de-producao", icon: <Boxes /> },
+      { label: "Produção", href: "/estoque-de-producao", icon: <Boxes /> },
       { label: "Processamentos", href: "/processamentos", icon: <Factory /> },
       { label: "Destinações", href: "/destinacoes", icon: <Truck /> },
     ],
@@ -48,7 +48,7 @@ export const NAV: NavGroup[] = [
     label: "Catálogo",
     items: [
       { label: "Espécies", href: "/especies", icon: <Leaf /> },
-      { label: "Cultivares", href: "/cultivares", icon: <Cherry /> },
+      { label: "Cultivos", href: "/cultivares", icon: <Cherry /> },
     ],
   },
   {

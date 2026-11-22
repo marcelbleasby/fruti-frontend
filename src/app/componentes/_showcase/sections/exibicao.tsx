@@ -40,6 +40,7 @@ import {
   TextList,
   AREA_STATUSES,
   BATCH_STATUSES,
+  RECORD_STATUSES,
   PLANTING_STATUSES,
   type BadgeVariant,
   type ColumnDef,
@@ -61,10 +62,10 @@ interface PlantingRow {
 }
 
 const ROWS: PlantingRow[] = [
-  { id: "pl-0042", code: "PL-0042", species: "Manga Tommy Atkins", area: "A-03 · Talhão Norte", plants: 480, plantedAt: "2026-03-12", status: "ativo" },
-  { id: "pl-0041", code: "PL-0041", species: "Acerola BRS 366 Jaburu", area: "A-01 · Talhão Sul", plants: 620, plantedAt: "2026-02-28", status: "ativo" },
-  { id: "pl-0043", code: "PL-0043", species: "Banana Prata Anã", area: "A-06 · Baixio", plants: null, plantedAt: "2026-12-02", status: "em_preparo" },
-  { id: "pl-0040", code: "PL-0040", species: "Caju CCP 76", area: "A-05 · Encosta", plants: 350, plantedAt: "2026-02-15", status: "ativo" },
+  { id: "pl-0042", code: "PL-0042", species: "Manga Tommy Atkins", area: "A-03 · Talhão Norte", plants: 480, plantedAt: "2026-03-12", status: "em_desenvolvimento" },
+  { id: "pl-0041", code: "PL-0041", species: "Acerola BRS 366 Jaburu", area: "A-01 · Talhão Sul", plants: 620, plantedAt: "2026-02-28", status: "em_desenvolvimento" },
+  { id: "pl-0043", code: "PL-0043", species: "Banana Prata Anã", area: "A-06 · Baixio", plants: null, plantedAt: "2026-12-02", status: "implantado" },
+  { id: "pl-0040", code: "PL-0040", species: "Caju CCP 76", area: "A-05 · Encosta", plants: 350, plantedAt: "2026-02-15", status: "em_desenvolvimento" },
   { id: "pl-0031", code: "PL-0031", species: "Melancia Crimson Sweet", area: "A-02 · Várzea", plants: 1400, plantedAt: "2025-08-10", status: "encerrado" },
 ];
 
@@ -197,7 +198,7 @@ export function ExibicaoSection() {
       <Demo name="MetricCard · Stat" importPath="@/components/data-display">
         <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="4">
           <MetricCard label="Área cultivada" value={18.4} unit="ha" formatOptions={{ maximumFractionDigits: 1 }} icon={<LandPlot />} trend={{ value: "+4,2 ha", direction: "up", label: "em 12 meses" }} />
-          <MetricCard label="Plantios ativos" value={9} icon={<Sprout />} description="2 em preparo" href="/plantios" />
+          <MetricCard label="Plantios em campo" value={9} icon={<Sprout />} description="2 implantados" href="/plantios" />
           <MetricCard label="Mudas livres" value={1150} trend={{ value: "−20", direction: "down", label: "no lote LM-2026-014" }} surface="subtle" />
           <MetricCard label="Plantas" value={0} loading />
         </SimpleGrid>
@@ -238,6 +239,11 @@ export function ExibicaoSection() {
             <Row>
               {BATCH_STATUSES.map((s) => <StatusBadge key={s} status={s} size="sm" />)}
               {AREA_STATUSES.map((s) => <StatusBadge key={s} status={s} size="sm" />)}
+            </Row>
+          </Variant>
+          <Variant label="Registro (processamento, destinação) · sm">
+            <Row>
+              {RECORD_STATUSES.map((s) => <StatusBadge key={s} status={s} size="sm" />)}
             </Row>
           </Variant>
         </VariantGrid>
@@ -302,7 +308,7 @@ export function ExibicaoSection() {
 
       <Demo name="Card" importPath="@/components/data-display">
         <VariantGrid min="260px">
-          <Card headingAs="h4" title="Outline (padrão)" description="Listas e grids." headerEnd={<StatusBadge status="ativo" size="sm" />} />
+          <Card headingAs="h4" title="Outline (padrão)" description="Listas e grids." headerEnd={<StatusBadge status="em_desenvolvimento" size="sm" />} />
           <Card headingAs="h4" variant="elevated" title="Elevated" description="Menus e cards soltos." />
           <Card headingAs="h4" variant="subtle" title="Subtle" description="Resumos sem ação principal." />
           <Card headingAs="h4"

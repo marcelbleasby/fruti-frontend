@@ -8,7 +8,8 @@ import { NativeSelectField } from "@/components/forms/native-select-field";
 import type { FieldOption } from "@/components/forms/types";
 import type { DocumentCategory, EntityRef } from "@/modules/types";
 import { DOCUMENT_ACCEPT, DOCUMENT_CATEGORY_OPTIONS, DOCUMENT_MAX_SIZE, MB } from "./constants";
-import { createFileValidator, useUploadQueue, type UploadContext } from "./use-upload-queue";
+import { useUploadQueue, type UploadContext } from "@/hooks/useUploadQueue";
+import { createFileValidator } from "./file-validator";
 
 export interface DocumentUploaderProps<R = unknown> {
   /** Registro ao qual os documentos serão vinculados. */

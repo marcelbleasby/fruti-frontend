@@ -1,6 +1,7 @@
 import { Box, type BoxProps, Button, Icon, Text, Timeline } from "@chakra-ui/react";
 import { Activity } from "lucide-react";
 import type { ReactElement, ReactNode } from "react";
+import { formatarDataHora } from "@/lib/datas";
 
 export interface ActivityItem {
   /** Chave estável; padrão: índice. */
@@ -27,8 +28,7 @@ export interface ActivityTimelineProps extends Omit<BoxProps, "children"> {
   formatDate?: (date: Date) => string;
 }
 
-const defaultFormatDate = (d: Date) =>
-  new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(d);
+const defaultFormatDate = (d: Date) => formatarDataHora(d, "");
 
 /**
  * ActivityTimeline — histórico recente: indicador 32px (primary.subtle), linha de 2px, título,

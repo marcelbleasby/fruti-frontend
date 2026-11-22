@@ -112,8 +112,26 @@ export function SpeciesDetails({
         items={[
           { label: "Nome popular", value: species.name },
           { label: "Nome científico", value: <i>{species.scientificName}</i> },
-          { label: "Família", value: species.family },
-          { label: "Ciclo", value: species.cycle ? CYCLE_LABEL[species.cycle] : null },
+          // Família e ciclo só aparecem quando informados (o catálogo pode não ter esses dados).
+          ...(species.family ? [{ label: "Família", value: species.family }] : []),
+          ...(species.cycle ? [{ label: "Ciclo", value: CYCLE_LABEL[species.cycle] }] : []),
+          ...(species.active !== undefined
+            ? [{ label: "Situação", value: species.active ? "Ativa" : "Inativa · não aparece para novos plantios" }]
+            : []),
+          ...(species.description
+            ? [
+                {
+                  label: "Descrição",
+                  // Texto longo: peso normal e quebra de URLs/palavras longas.
+                  value: (
+                    <Text as="span" fontWeight="400" overflowWrap="anywhere">
+                      {species.description}
+                    </Text>
+                  ),
+                  span: "full" as const,
+                },
+              ]
+            : []),
           {
             label: "Plantios",
             value:
@@ -130,11 +148,11 @@ export function SpeciesDetails({
 
       <Stack gap="2" pt="3" borderTopWidth="1px" borderColor="green.100">
         <chakra.span textStyle="label" color="fg.muted" id={`species-${species.id}-cultivars`}>
-          Cultivares relacionadas
+          Cultivos relacionados
         </chakra.span>
         {relatedCultivars.length === 0 ? (
           <Text textStyle="body.sm" color="fg.muted">
-            Nenhuma cultivar cadastrada para esta espécie.
+            Nenhum cultivo cadastrado para esta espécie.
           </Text>
         ) : (
           <Flex

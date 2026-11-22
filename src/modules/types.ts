@@ -26,7 +26,12 @@ export interface Species {
   family?: string;
   cycle?: SpeciesCycle;
   imageUrl?: string;
+  /** Descrição livre (catálogo). */
+  description?: string;
+  /** `false` = retirada do catálogo (não aparece para novos plantios). Padrão: ativa. */
+  active?: boolean;
   cultivarCount?: number;
+  /** Ausente = desconhecido (não exibe contagem). */
   plantingCount?: number;
 }
 
@@ -43,7 +48,15 @@ export interface Cultivar {
   /** Origem/procedência (ex.: "Flórida, EUA"). */
   origin?: string;
   characteristics?: string;
+  /** Espaçamento recomendado entre linhas, em metros. */
+  rowSpacingM?: number;
+  /** Espaçamento recomendado entre plantas, em metros. */
+  plantSpacingM?: number;
+  /** Idade em que começa a produzir, em meses. */
+  productionStartMonths?: number;
+  notes?: string;
   createdAt?: string;
+  /** Ausente = desconhecido (não exibe contagem). */
   plantingCount?: number;
 }
 
@@ -57,9 +70,37 @@ export interface Area {
   length: number;
   /** Largura em metros. */
   width: number;
+  description?: string;
   createdAt?: string;
   activePlantings?: number;
   plants?: number;
+  /** Área já ocupada por unidades de cultivo, em m². */
+  unitsAreaM2?: number;
+  /** Área ainda sem unidade de cultivo, em m². */
+  freeAreaM2?: number;
+}
+
+/** Tipo da unidade de cultivo (glossário: Canteiro, Talhão ou Outro). */
+export type CultivationUnitType = "canteiro" | "talhao" | "outro";
+
+/**
+ * Unidade de cultivo: divisão retangular de uma área que recebe plantios. A posição
+ * (canto, em metros a partir do canto da área) é opcional; sem ela, a unidade não
+ * aparece no desenho, só na lista.
+ */
+export interface CultivationUnit {
+  id: string;
+  areaId: AreaId;
+  type: CultivationUnitType;
+  name: string;
+  code: string;
+  description?: string;
+  /** Comprimento (eixo x), em metros. */
+  length: number;
+  /** Largura (eixo y), em metros. */
+  width: number;
+  x?: number | null;
+  y?: number | null;
 }
 
 export interface AreaRef {

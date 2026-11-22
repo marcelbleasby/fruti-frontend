@@ -83,10 +83,10 @@ const MOBILE_NAV: NavItem[] = [
 ];
 
 const PLANTINGS = [
-  { code: "PL-0042", status: "ativo" as const, desc: "Manga · Tommy Atkins" },
-  { code: "PL-0043", status: "em_preparo" as const, desc: "Banana · Prata Anã" },
-  { code: "PL-0041", status: "ativo" as const, desc: "Acerola · BRS 366 Jaburu" },
-  { code: "PL-0040", status: "ativo" as const, desc: "Caju · CCP 76" },
+  { code: "PL-0042", status: "em_desenvolvimento" as const, desc: "Manga · Tommy Atkins" },
+  { code: "PL-0043", status: "implantado" as const, desc: "Banana · Prata Anã" },
+  { code: "PL-0041", status: "em_desenvolvimento" as const, desc: "Acerola · BRS 366 Jaburu" },
+  { code: "PL-0040", status: "em_desenvolvimento" as const, desc: "Caju · CCP 76" },
 ];
 
 /** Moldura de celular (390 px) para os componentes de navegação mobile. */
@@ -268,7 +268,7 @@ export function EstruturaSection() {
             <PageHeader
               headingAs="h2"
               title="Plantios"
-              status={<StatusBadge status="ativo" />}
+              status={<StatusBadge status="em_desenvolvimento" />}
               description="Acompanhe os plantios por área, espécie e origem."
               breadcrumb={[{ label: "Início", href: "/" }, { label: "Plantios" }]}
               actions={

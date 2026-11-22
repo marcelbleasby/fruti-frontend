@@ -41,7 +41,7 @@ export function PlantingAreaSummary({ area }: { area: Area }) {
           {formatNumber(area.length)} m × {formatNumber(area.width)} m
         </chakra.span>
         <chakra.span color="fg.muted">
-          {formatSquareMeters(m2)} · {active > 0 ? `${active} ${active === 1 ? "plantio ativo" : "plantios ativos"}` : "sem plantio ativo"}
+          {formatSquareMeters(m2)} · {active > 0 ? `${active} ${active === 1 ? "plantio em campo" : "plantios em campo"}` : "sem plantio em campo"}
         </chakra.span>
       </Flex>
     </Flex>

@@ -29,6 +29,7 @@ import {
   useState,
 } from "react";
 import { Skeleton, SkeletonCircle } from "./skeleton";
+import { formatarData } from "@/lib/datas";
 
 /* ───────────────────────────── Tipos ───────────────────────────── */
 
@@ -152,7 +153,7 @@ function renderCell<T>(col: ColumnDef<T>, row: T, index: number): ReactNode {
   if (col.cell) return col.cell(row, index);
   const v = readKey(row, col.key);
   if (v === null || v === undefined || v === "") return "—";
-  if (v instanceof Date) return new Intl.DateTimeFormat("pt-BR").format(v);
+  if (v instanceof Date) return formatarData(v);
   if (typeof v === "number") return new Intl.NumberFormat("pt-BR").format(v);
   return String(v);
 }

@@ -19,7 +19,7 @@ export interface PropriedadeContextValue {
 
 const PropriedadeContext = createContext<PropriedadeContextValue | null>(null);
 
-export const PAPEL_LABEL: Record<string, string> = { proprietario: "Proprietário" };
+export const PAPEL_LABEL: Record<string, string> = { PROPRIETARIO: "Proprietário" };
 
 export function PropriedadeProvider({ children }: { children: ReactNode }) {
   const router = useRouter();

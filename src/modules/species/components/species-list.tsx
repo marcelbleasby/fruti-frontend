@@ -22,7 +22,16 @@ export interface SpeciesListProps extends Omit<BoxProps, "children"> {
   onViewChange?: (view: SpeciesListView) => void;
   /** Busca com debounce (mostra o campo quando presente). */
   onSearch?: (query: string) => void;
+  /** Termo inicial da busca (ex.: vindo da URL). */
+  searchDefaultValue?: string;
   searching?: boolean;
+  /** Texto do estado vazio (ex.: diferente quando há busca). */
+  emptyTitle?: string;
+  emptyDescription?: string;
+  /** Contexto do contador (padrão "no catálogo global"). */
+  countSuffix?: string;
+  /** Mostra a área de foto nos cards (padrão true). */
+  showImages?: boolean;
   pagination?: DataTablePagination;
   onPageChange?: (page: number) => void;
   getHref: (species: Species) => string;
@@ -41,7 +50,12 @@ export function SpeciesList({
   view = "table",
   onViewChange,
   onSearch,
+  searchDefaultValue,
   searching,
+  emptyTitle = "Nenhuma espécie no catálogo",
+  emptyDescription = "Cadastre a primeira espécie para usá-la em plantios.",
+  countSuffix = "no catálogo global",
+  showImages = true,
   pagination,
   onPageChange,
   getHref,
@@ -67,17 +81,23 @@ export function SpeciesList({
             <i>{s.scientificName}</i>
             {s.family ? ` · ${s.family}` : null}
           </Text>
+          {s.active === false ? (
+            <Badge tone="gray" variant="outline" alignSelf="flex-start" mt="1">
+              Inativa
+            </Badge>
+          ) : null}
         </Stack>
       ),
     },
     {
       key: "cultivarCount",
-      header: "Cultivares",
+      header: "Cultivos",
       numeric: true,
       sortable: true,
       cell: (s) => formatNumber(s.cultivarCount ?? 0),
     },
-    {
+    // Plantios só quando a contagem é conhecida (sem ela, "sem plantios" seria enganoso).
+    ...(items.some((s) => s.plantingCount !== undefined) ? [{
       key: "plantingCount",
       header: "Plantios",
       numeric: true,
@@ -90,19 +110,25 @@ export function SpeciesList({
             sem plantios
           </Badge>
         ),
-    },
+    } satisfies ColumnDef<Species>] : []),
   ];
 
   return (
     <Box display="flex" flexDirection="column" gap="3" {...rest}>
       <Flex justify="space-between" align="center" gap="2" wrap="wrap">
         <Text textStyle="body.sm" color="fg.muted" role="status">
-          {plural(count, "espécie")} no catálogo global
+          {plural(count, "espécie")} {countSuffix}
         </Text>
         <Flex gap="2" align="center" flex={{ base: "1 1 100%", sm: "0 1 auto" }} justify="flex-end">
           {onSearch && (
             <Box flex="1" minW="200px" maxW="320px">
-              <SearchField label="Buscar espécies" placeholder="Buscar espécies" onSearch={onSearch} loading={searching} />
+              <SearchField
+                label="Buscar espécies"
+                placeholder="Buscar espécies"
+                defaultValue={searchDefaultValue}
+                onSearch={onSearch}
+                loading={searching}
+              />
             </Box>
           )}
           {onViewChange && (
@@ -131,17 +157,17 @@ export function SpeciesList({
           loading={loading}
           error={error}
           onRetry={onRetry}
-          emptyTitle="Nenhuma espécie no catálogo"
-          emptyDescription="Cadastre a primeira espécie para usá-la em plantios."
+          emptyTitle={emptyTitle}
+          emptyDescription={emptyDescription}
           minTableWidth="560px"
-          renderMobileCard={(s) => <SpeciesCard species={s} href={getHref(s)} />}
+          renderMobileCard={(s) => <SpeciesCard species={s} href={getHref(s)} showImage={showImages} />}
         />
       ) : (
         <>
           <SimpleGrid as="ul" listStyleType="none" columns={{ base: 1, sm: 2, lg: 3 }} gap="3" aria-label="Espécies">
             {items.map((s) => (
               <li key={s.id}>
-                <SpeciesCard species={s} href={getHref(s)} h="full" />
+                <SpeciesCard species={s} href={getHref(s)} h="full" showImage={showImages} />
               </li>
             ))}
           </SimpleGrid>

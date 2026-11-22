@@ -1,7 +1,7 @@
 "use client";
 
-import { Fieldset, Flex, chakra } from "@chakra-ui/react";
-import { NumberInput } from "@/components/forms/number-input";
+import { Box, Fieldset, Flex, chakra } from "@chakra-ui/react";
+import { DecimalInput, parseDecimalPtBR } from "@/components/forms/decimal-input";
 import { areaSquareMeters, formatHectares, formatSquareMeters } from "../../format";
 
 /** Valores como string (pt-BR) para permitir decimais intermediários ao digitar. */
@@ -30,15 +30,15 @@ export interface AreaMeasurementFieldsProps {
   names?: { length?: string; width?: string };
 }
 
+/** Lê "12,5", "12.5" ou "1.250" (o NumberInput arredondava no blur; ver ADR 0002). */
 function toNumber(raw: string): number {
-  const n = Number(raw.replace(/\./g, "").replace(",", "."));
-  return Number.isFinite(n) ? n : NaN;
+  return parseDecimalPtBR(raw);
 }
 
 /**
  * AreaMeasurementFields — comprimento × largura com a área recalculada
  * enquanto digita e anunciada a leitores de tela (`<output aria-live>`).
- * Chakra v3: Fieldset · Field · NumberInput.Root · InputAddon.
+ * Chakra v3: Fieldset · DecimalInput (TextInput do DS).
  */
 export function AreaMeasurementFields({
   value,
@@ -70,35 +70,35 @@ export function AreaMeasurementFields({
         {legend}
       </Fieldset.Legend>
       <Flex gap="2.5" align="flex-start" minW="0">
-        <NumberInput
-          id={lengthId}
-          name={names?.length}
-          label="Comprimento"
-          required
-          unit={unit}
-          hideStepper
-          inputMode="decimal"
-          min={0}
-          value={value.length}
-          onValueChange={(d) => update({ length: d.value }, { length: d.valueAsNumber })}
-          errorText={errors?.length}
-          fieldProps={{ flex: "1 1 110px", minW: "0" }}
-        />
+        <Box flex="1 1 110px" minW="0">
+          <DecimalInput
+            id={lengthId}
+            name={names?.length}
+            label="Comprimento"
+            required
+            unit={unit}
+            casas={2}
+            value={value.length}
+            onChange={(v) => update({ length: v }, { length: toNumber(v) })}
+            errorText={errors?.length}
+            invalid={Boolean(errors?.length)}
+          />
+        </Box>
         {times}
-        <NumberInput
-          id={widthId}
-          name={names?.width}
-          label="Largura"
-          required
-          unit={unit}
-          hideStepper
-          inputMode="decimal"
-          min={0}
-          value={value.width}
-          onValueChange={(d) => update({ width: d.value }, { width: d.valueAsNumber })}
-          errorText={errors?.width}
-          fieldProps={{ flex: "1 1 110px", minW: "0" }}
-        />
+        <Box flex="1 1 110px" minW="0">
+          <DecimalInput
+            id={widthId}
+            name={names?.width}
+            label="Largura"
+            required
+            unit={unit}
+            casas={2}
+            value={value.width}
+            onChange={(v) => update({ width: v }, { width: toNumber(v) })}
+            errorText={errors?.width}
+            invalid={Boolean(errors?.width)}
+          />
+        </Box>
       </Flex>
       <chakra.output
         htmlFor={`${lengthId} ${widthId}`}

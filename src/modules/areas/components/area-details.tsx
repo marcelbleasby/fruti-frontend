@@ -8,8 +8,9 @@ import { AreaCode } from "./area-card";
 import { AreaMeasurementDisplay } from "./area-measurement-display";
 import { AreaOverview, type AreaOverviewStats } from "./area-overview";
 import { AreaPlantingList, type AreaPlantingListProps } from "./area-planting-list";
+import { EM_CAMPO } from "@/modules/plantings/utils";
 
-export type AreaDetailsTab = "resumo" | "plantios" | "imagens" | "historico";
+export type AreaDetailsTab = "resumo" | "unidades" | "plantios" | "imagens" | "historico";
 
 export interface AreaDetailsProps extends Omit<FlexProps, "children"> {
   area: Area;
@@ -19,6 +20,12 @@ export interface AreaDetailsProps extends Omit<FlexProps, "children"> {
   tab?: AreaDetailsTab;
   defaultTab?: AreaDetailsTab;
   onTabChange?: (tab: AreaDetailsTab) => void;
+  /** Conteúdo da aba Unidades de cultivo (ex.: AreaUnitMap + lista). Sem ele, a aba não aparece. */
+  units?: ReactNode;
+  unitCount?: number;
+  /** Mostra as abas Imagens e Histórico (padrão true). Desligue quando o recurso ainda não existe, em vez de exibir um vazio. */
+  showImages?: boolean;
+  showHistory?: boolean;
   /** Conteúdo da aba Imagens (ex.: ImageGallery). */
   images?: ReactNode;
   imageCount?: number;
@@ -51,6 +58,10 @@ export function AreaDetails({
   tab,
   defaultTab = "resumo",
   onTabChange,
+  units,
+  unitCount,
+  showImages = true,
+  showHistory = true,
   images,
   imageCount,
   history,
@@ -62,10 +73,10 @@ export function AreaDetails({
 }: AreaDetailsProps) {
   // Aba "Plantios": os que a lista mostra por padrão (não encerrados nem cancelados).
   const openCount = plantings.filter((p) => p.status !== "encerrado" && p.status !== "cancelado").length;
-  // Resumo "Plantios ativos": só status Ativo, coerente com o StatusBadge.
+  // Resumo "Plantios em campo": implantado, em desenvolvimento ou colhido (glossário).
   const overviewStats: AreaOverviewStats = {
     ...stats,
-    plantings: stats?.plantings ?? plantings.filter((p) => p.status === "ativo").length,
+    plantings: stats?.plantings ?? plantings.filter((p) => EM_CAMPO.includes(p.status)).length,
   };
   const sectionHeading = headingAs === "h1" ? "h2" : "h3";
 
@@ -74,7 +85,12 @@ export function AreaDetails({
       <Flex align="center" justify="space-between" gap="3" flexWrap="wrap">
         <Flex align="baseline" gap="2" minW="0">
           <AreaCode>{area.code}</AreaCode>
-          <Heading as={headingAs} textStyle={headingAs === "h1" ? "heading.xl" : "heading.lg"} color="fg.heading" truncate>
+          <Heading
+            as={headingAs}
+            textStyle={headingAs === "h1" ? "heading.xl" : "heading.lg"}
+            color="fg.heading"
+            truncate
+          >
             {area.name}
           </Heading>
         </Flex>
@@ -111,25 +127,47 @@ export function AreaDetails({
               </SimpleGrid>
             ),
           },
+          ...(units !== undefined
+            ? [
+                {
+                  value: "unidades",
+                  label: "Unidades de cultivo",
+                  count: unitCount,
+                  content: <chakra.div pt="4">{units}</chakra.div>,
+                },
+              ]
+            : []),
           {
             value: "plantios",
             label: "Plantios",
             count: openCount,
-            content: (
-              <AreaPlantingList mt="4" areaId={area.id} plantings={plantings} {...plantingListProps} />
-            ),
+            content: <AreaPlantingList mt="4" areaId={area.id} plantings={plantings} {...plantingListProps} />,
           },
-          {
-            value: "imagens",
-            label: "Imagens",
-            count: imageCount,
-            content: <chakra.div pt="4">{images ?? <Placeholder>Nenhuma imagem desta área ainda.</Placeholder>}</chakra.div>,
-          },
-          {
-            value: "historico",
-            label: "Histórico",
-            content: <chakra.div pt="4">{history ?? <Placeholder>Sem eventos registrados.</Placeholder>}</chakra.div>,
-          },
+          ...(showImages
+            ? [
+                {
+                  value: "imagens",
+                  label: "Imagens",
+                  count: imageCount,
+                  content: (
+                    <chakra.div pt="4">
+                      {images ?? <Placeholder>Nenhuma imagem desta área ainda.</Placeholder>}
+                    </chakra.div>
+                  ),
+                },
+              ]
+            : []),
+          ...(showHistory
+            ? [
+                {
+                  value: "historico",
+                  label: "Histórico",
+                  content: (
+                    <chakra.div pt="4">{history ?? <Placeholder>Sem eventos registrados.</Placeholder>}</chakra.div>
+                  ),
+                },
+              ]
+            : []),
         ]}
       />
     </Flex>

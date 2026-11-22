@@ -11,7 +11,8 @@ import { authedApiFetch } from "@/lib/auth/session";
  */
 export const PROPRIEDADE_COOKIE = "fruti_propriedade";
 
-export type Papel = "proprietario" | (string & {});
+/** Valores de `meu_papel` na API (enum `Papel` do fruti-api). */
+export type Papel = "PROPRIETARIO" | (string & {});
 
 export interface Propriedade {
   id: string;
@@ -32,7 +33,27 @@ interface PropriedadeSaida {
 /** Propriedades com vínculo ativo do usuário, em ordem alfabética (até 200 — o máximo da API). */
 export async function listPropriedades(): Promise<Propriedade[]> {
   const { itens } = await authedApiFetch<Pagina<PropriedadeSaida>>("/propriedades?ordenar=nome&limit=200");
-  return itens.map((p) => ({ id: p.id, nome: p.nome, descricao: p.descricao, meuPapel: p.meu_papel }));
+  return itens.map(toPropriedade);
+}
+
+const toPropriedade = (p: PropriedadeSaida): Propriedade => ({
+  id: p.id,
+  nome: p.nome,
+  descricao: p.descricao,
+  meuPapel: p.meu_papel,
+});
+
+export interface PropriedadeEntrada {
+  nome: string;
+  descricao: string;
+  /** Graus decimais (WGS 84) com até 6 casas, como string. Ambas ou nenhuma. */
+  latitude: string | null;
+  longitude: string | null;
+}
+
+/** Cria a propriedade; quem cria vira Proprietário (vínculo criado pela API). */
+export async function createPropriedade(dados: PropriedadeEntrada): Promise<Propriedade> {
+  return toPropriedade(await authedApiFetch<PropriedadeSaida>("/propriedades", { method: "POST", body: dados }));
 }
 
 /** Escolhe a ativa: a do cookie, se o usuário ainda tiver vínculo; senão a primeira. */

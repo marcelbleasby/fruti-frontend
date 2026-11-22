@@ -10,6 +10,8 @@ export const LOGIN_ROUTE = "/";
 export const SIGN_UP_ROUTE = "/cadastrar";
 /** Destino depois de entrar. */
 export const HOME_ROUTE = "/painel";
+/** Primeiro acesso: quem ainda não tem propriedade cadastra a primeira aqui. */
+export const ONBOARDING_ROUTE = "/bem-vindo";
 
 /** Só para quem não está logado. */
 export const AUTH_ROUTES = [LOGIN_ROUTE, SIGN_UP_ROUTE];

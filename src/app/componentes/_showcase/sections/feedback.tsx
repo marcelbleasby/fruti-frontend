@@ -18,7 +18,6 @@ import {
   type IndicatorTone,
   type NotificationItem,
 } from "@/components/feedback";
-import { Toaster } from "@/components/ui/toaster";
 import { Demo, Row, ShowcaseSection, Variant, VariantGrid } from "../showcase";
 
 const STATUSES: FeedbackStatus[] = ["success", "info", "warning", "error"];
@@ -54,8 +53,6 @@ export function FeedbackSection() {
       title="Feedback"
       description="Toast para resultado de ação; Alert e SystemBanner para contexto que precisa ficar visível; estados vazio e de erro."
     >
-      <Toaster />
-
       <Demo name="Alert" importPath="@/components/feedback">
         <VariantGrid min="360px">
           {STATUSES.map((status) => (

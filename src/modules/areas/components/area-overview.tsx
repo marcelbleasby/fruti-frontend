@@ -89,18 +89,21 @@ export function AreaOverview({ area, stats, editHref, onEdit, headingAs = "h3", 
           </Heading>
         </Flex>
         {editHref ? (
-          <Button asChild variant="outline" size="sm" aria-label={`Editar área ${area.code}`}>
+          <Button asChild variant="outline" size="sm" aria-label={`Editar área ${area.code || area.name}`}>
             <NextLink href={editHref}>{editLabel}</NextLink>
           </Button>
         ) : onEdit ? (
-          <Button variant="outline" size="sm" onClick={onEdit} aria-label={`Editar área ${area.code}`}>
+          <Button variant="outline" size="sm" onClick={onEdit} aria-label={`Editar área ${area.code || area.name}`}>
             {editLabel}
           </Button>
         ) : null}
       </Flex>
       <SimpleGrid minChildWidth="112px" gap="2">
         <OverviewStat label="Área calculada" value={haValue} unit="ha" />
-        <OverviewStat label="Plantios ativos" value={formatNumber(plantings)} />
+        {area.freeAreaM2 !== undefined ? (
+          <OverviewStat label="Área livre" value={formatNumber(Math.round(area.freeAreaM2))} unit="m²" />
+        ) : null}
+        <OverviewStat label="Plantios em campo" value={formatNumber(plantings)} />
         <OverviewStat label="Plantas" value={formatNumber(plants)} />
         <OverviewStat label="Densidade" value={density != null ? formatNumber(density) : "—"} unit={density != null ? "pl/ha" : undefined} />
       </SimpleGrid>

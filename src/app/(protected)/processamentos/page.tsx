@@ -1,8 +1,27 @@
 import type { Metadata } from "next";
-import { EmConstrucao } from "../em-construcao";
+import { Suspense } from "react";
+import {
+  ProcessamentosCabecalho,
+  ProcessamentosCabecalhoEstatico,
+} from "@/modules/beneficiamento/components/processamentos-cabecalho";
+import { ProcessamentosConteudo } from "@/modules/beneficiamento/processamentos-conteudo";
+import { EstoqueCarregando } from "@/modules/estoque/components/estoque-estados";
 
 export const metadata: Metadata = { title: "Processamentos · Fruti" };
 
-export default function ProcessamentosPage() {
-  return <EmConstrucao titulo="Processamentos" descricao="Transformação de fruta e insumos em produtos, com perda e rendimento." />;
+/**
+ * /processamentos — cabeçalho e drawers no cliente (URL: ?processamento=, ?registrar=1);
+ * lista e resumo no servidor, dentro do Suspense (leem cookie e filtros da URL).
+ */
+export default function ProcessamentosPage({ searchParams }: PageProps<"/processamentos">) {
+  return (
+    <>
+      <Suspense fallback={<ProcessamentosCabecalhoEstatico />}>
+        <ProcessamentosCabecalho />
+      </Suspense>
+      <Suspense fallback={<EstoqueCarregando />}>
+        <ProcessamentosConteudo searchParams={searchParams} />
+      </Suspense>
+    </>
+  );
 }
